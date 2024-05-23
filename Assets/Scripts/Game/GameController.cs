@@ -28,6 +28,8 @@ public class GameController : SingletonMono<GameController>
     [SerializeField] private AudioClip rightSound;
     [SerializeField] private AudioClip wrongSound;
     [SerializeField] private AudioClip winSound;
+
+    public SaveLoadManager saveLoadManager;
     // Start is called before the first frame update
 
     private void OnEnable()
@@ -65,6 +67,14 @@ public class GameController : SingletonMono<GameController>
 
     public void ActiveCard()
     {
+        for(int j = 0; j < listCards.transform.childCount; j++)
+        {
+            listCards.transform.GetChild(j).gameObject.SetActive(false);
+            listCards.transform.GetChild(j).GetComponent<CardController>().backCardImage.gameObject.SetActive(true);
+            listCards.transform.GetChild(j).GetComponent<CardController>().isHide = true;
+        }
+        listCardInGame.Clear();
+
         for (int i = 0; i < mode*4; i++)
         {
             listCards.transform.GetChild(i).gameObject.SetActive(true);
@@ -112,7 +122,9 @@ public class GameController : SingletonMono<GameController>
                 combo++;
                 compareRight++;
                 AudioManager.Instance.PlayOneShot(rightSound);
-                if(compareRight == mode * 2)
+                listCardShowed[0].GetComponent<CardController>().isHide = false;
+                listCardShowed[1].GetComponent<CardController>().isHide = false;
+                if (compareRight == mode * 2)
                 {
                     StartCoroutine(Win());
                 }
@@ -137,12 +149,6 @@ public class GameController : SingletonMono<GameController>
 
     public void BackToMenu()
     {
-        for (int i = 0; i < mode * 4; i++)
-        {
-            listCards.transform.GetChild(i).gameObject.SetActive(false);
-            StartCoroutine(listCards.transform.GetChild(i).GetComponent<CardController>().HideCard());
-            listCardInGame.Remove(listCards.transform.GetChild(i).gameObject);
-        }
         inGamePanel.SetActive(false);
         menuPanel.SetActive(true);
     }
@@ -154,6 +160,8 @@ public class GameController : SingletonMono<GameController>
         winPanel.SetActive(true);
         inGamePanel.SetActive(false);
         endGameScoreText.text = scoreTxt.text;
+
+        DeleteGameSave();
     }
 
     public void Replay()
@@ -171,6 +179,44 @@ public class GameController : SingletonMono<GameController>
         combo = 1;
         compareRight = 0;
         scoreTxt.text = "Score: " + score;
+    }
+
+    public void SaveGame()
+    {
+        saveLoadManager.SaveGame(score, combo, compareRight, mode, listCardInGame);
+    }
+
+    public void LoadGame()
+    {
+        var gameData = saveLoadManager.LoadGame();
+        if (gameData == null) return;
+
+        score = gameData.score;
+        combo = gameData.combo;
+        compareRight = gameData.compareRight;
+        mode = gameData.mode;
+
+        foreach (var cardData in gameData.cards)
+        {
+            Transform cardTransform = listCards.transform.GetChild(cardData.childIndex);
+            Debug.Log(cardData.childIndex);
+            GameObject card = cardTransform.gameObject;
+            card.SetActive(cardData.isActive);
+            var cardController = card.GetComponent<CardController>();
+            cardController.id = cardData.id;
+            cardController.cardImage.sprite = cardSprite.Find(sprite => sprite.name == cardData.spriteName);
+            cardController.backCardImage.gameObject.SetActive(cardData.isHide);
+        }
+        Debug.Log("Game Loaded!");
+
+        menuPanel.SetActive(false);
+        inGamePanel.SetActive(true);
+        scoreTxt.text = "Score: " + score;
+    }
+
+    public void DeleteGameSave()
+    {
+        saveLoadManager.DeleteSave();
     }
     // Update is called once per frame
     void Update()
