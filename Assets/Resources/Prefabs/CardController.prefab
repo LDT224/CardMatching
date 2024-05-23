@@ -225,4 +225,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardImage: {fileID: 6583687670031941489}
   backCardImage: {fileID: 6583687669902437329}
+  flipSound: {fileID: 8300000, guid: 61698132591c97e449baa6789384cd30, type: 3}
   id: 0

@@ -7,6 +7,7 @@ public class CardController : SingletonMono<CardController>
 {
     [SerializeField] public Image cardImage;
     [SerializeField] private Image backCardImage;
+    [SerializeField] private AudioClip flipSound;
     public int id;
     // Start is called before the first frame update
     void Start()
@@ -16,6 +17,9 @@ public class CardController : SingletonMono<CardController>
 
     public void ShowCard()
     {
+        if(!backCardImage.IsActive()) return;
+
+        AudioManager.Instance.PlayOneShot(flipSound);
         backCardImage.gameObject.SetActive(false);
         GameController.instance.listCardShowed.Add(this.gameObject);
         GameController.instance.CompareCard();
