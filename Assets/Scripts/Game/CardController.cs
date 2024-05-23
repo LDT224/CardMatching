@@ -8,7 +8,6 @@ public class CardController : SingletonMono<CardController>
     [SerializeField] public Image cardImage;
     [SerializeField] private Image backCardImage;
     public int id;
-    public bool showed;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,16 +17,16 @@ public class CardController : SingletonMono<CardController>
     public void ShowCard()
     {
         backCardImage.gameObject.SetActive(false);
-
-        if(!showed)
-            StartCoroutine(HideCard());
+        GameController.instance.listCardShowed.Add(this.gameObject);
+        GameController.instance.CompareCard();
     }
 
-    IEnumerator HideCard()
+    public IEnumerator HideCard()
     {
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
         backCardImage.gameObject.SetActive(true);
     }
+
     // Update is called once per frame
     void Update()
     {

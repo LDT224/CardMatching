@@ -11,6 +11,7 @@ public class GameController : SingletonMono<GameController>
     private List<GameObject> cardInGame = new List<GameObject>();
     private List<int> tempCardSprite = new List<int>();
     private List<int> tempCardInGame = new List<int>();
+    public List<GameObject> listCardShowed = new List<GameObject>();
     // Start is called before the first frame update
     private void OnEnable()
     {
@@ -43,7 +44,6 @@ public class GameController : SingletonMono<GameController>
                 continue;
             }
             tempCardSprite.Add(ranSprite);
-            Debug.Log("SPRITE : " + ranSprite);
 
             for(int j = 0; j < 2; j++)
             {
@@ -56,8 +56,26 @@ public class GameController : SingletonMono<GameController>
                 tempCardInGame.Add(ranCard);
                 cardInGame[ranCard].GetComponent<CardController>().id = i;
                 cardInGame[ranCard].GetComponent<CardController>().cardImage.sprite = cardSprite[ranSprite];
-                Debug.Log("CARD : " + ranCard);
             }
+        }
+    }
+
+    public void CompareCard()
+    {
+        if(listCardShowed.Count >= 2)
+        {
+            if (listCardShowed[0].GetComponent<CardController>().id == listCardShowed[1].GetComponent<CardController>().id)
+            {
+                Debug.Log("RIGHT");
+            }
+            else
+            {
+                Debug.Log("WRONG");
+                StartCoroutine(listCardShowed[0].GetComponent<CardController>().HideCard());
+                StartCoroutine(listCardShowed[1].GetComponent<CardController>().HideCard());
+            }
+            listCardShowed.RemoveAt(1);
+            listCardShowed.RemoveAt(0);
         }
     }
     // Update is called once per frame
