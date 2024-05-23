@@ -1,5 +1,5 @@
 # CardMatching
 
-+ : Add
-- : Remove
-* : Fix 
+"+" : Add
+"-" : Remove
+"*" : Fix 
