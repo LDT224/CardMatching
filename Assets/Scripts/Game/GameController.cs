@@ -183,6 +183,7 @@ public class GameController : SingletonMono<GameController>
 
     public void SaveGame()
     {
+        listCardShowed.Clear();
         saveLoadManager.SaveGame(score, combo, compareRight, mode, listCardInGame);
     }
 
