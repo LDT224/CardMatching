@@ -169,6 +169,7 @@ public class GameController : SingletonMono<GameController>
         for (int i = 0; i < mode * 4; i++)
         {
             listCards.transform.GetChild(i).transform.GetChild(0).gameObject.SetActive(true);
+            listCards.transform.GetChild(i).GetComponent<CardController>().isHide = true;
         }
         RandomCard();
 
@@ -179,6 +180,7 @@ public class GameController : SingletonMono<GameController>
         combo = 1;
         compareRight = 0;
         scoreTxt.text = "Score: " + score;
+        listCardInGame.Clear();
     }
 
     public void SaveGame()
